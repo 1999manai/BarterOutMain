@@ -48,7 +48,7 @@ function getPurchasedBooks(req, res) {
   const { payload: { userInfo: { permissionType } } } = req;
   if (permissionType > 0) {
     Textbook
-      .find({ status: 2 })
+      .find({ status: 'Cart_added' })
       .sort({ date: -1 })
       .exec((error, books) => {
         res.status(200).json(response(books));
@@ -184,7 +184,7 @@ function confirmBook(req, res) {
   if (auth.isAdmin(permissionType)) {
     Textbook.update(
       { _id: req.body.data.id },
-      { $set: { status: 2 } }, (err) => {
+      { $set: { status: 'Cart_added' } }, (err) => {
         if (!err) {
           res.status(200).json(response());
         }
@@ -205,7 +205,7 @@ function setBookPaid(req, res) {
   if (auth.isAdmin(permissionType)) {
     Textbook.update(
       { _id: req.body.data.id },
-      { $set: { status: 3 } }, (err) => {
+      { $set: { status: 'Tran_succ' } }, (err) => {
         if (!err) {
           res.status(200).json(response());
         }
@@ -392,7 +392,7 @@ function deactivateBooks(req, res) {
         }
       }
 
-      setBooksStatus(booksToDeactivate, 5);
+      setBooksStatus(booksToDeactivate, 'UNLISTED');
       User.find({ _id: { $in: usersToEmail } }, (error, users) => {
         for (let i = 0; i < users.length; i++) {
           emails.sendEmail(emails.deactivatedBook(users[i].emailAddress, users[i].firstName));

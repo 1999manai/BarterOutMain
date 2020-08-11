@@ -92,7 +92,7 @@ function postBook(req, res) {
               { course: { $regex: req.body.data.course, $options: 'i' } },
             ],
           },
-          { status: 0 },
+          { status: 'LISTED' },
           { owner: { $ne: _id } },
         ],
       }, (error, matchedBooks) => {
@@ -153,7 +153,7 @@ function requestBook(req, res) {
       Textbook.find(
         { // looks for a book that matches based on the name matching or the course
           $and: [
-            { status: 0 },
+            { status: 'LISTED' },
             {
               $or: [
                 { name: { $regex: BOOK.name, $options: 'i' } },
@@ -238,7 +238,7 @@ router.post('/checkoutCart', auth.required, (req, res) => {
           // Set status of requested book if they exist
           TextbookBuy.update({
             $and: [
-              { status: 0 },
+              { status: 'LISTED' },
               {
                 $or: [
                   { name: bookFound.name },
@@ -247,7 +247,7 @@ router.post('/checkoutCart', auth.required, (req, res) => {
               },
               { owner: _id },
             ],
-          }, { $set: { status: 1 } }, (error) => {
+          }, { $set: { status: 'Cart_added' } }, (error) => {
             console.warn(`Error in finding book being bought: ${error}`); // eslint-disable-line
           });
 
@@ -309,14 +309,14 @@ function getUserMatches(req, res) {
       let bookObjects = [];
       const bookIDs = user.matchedBooks;
       Textbook
-        .find({ $and: [{ _id: { $in: bookIDs } }, { status: 0 }] })
+        .find({ $and: [{ _id: { $in: bookIDs } }, { status: 'LISTED' }] })
         .sort({ date: -1 })
         .exec((error, books) => {
           bookObjects = books;
           for (let i = 0; i < bookObjects.length; i++) {
             for (let x = 0; x < user.cart.length; x++) {
               if (String(bookObjects[i]._id) === String(user.cart[x])) {
-                bookObjects[i].status = 42;
+                bookObjects[i].status = 'Cart_added';
               }
             }
           }
@@ -339,7 +339,7 @@ function searchRestricted(req, res) {
   if (Number.isNaN(parsed)) {
     Textbook.find({
       $and: [
-        { status: 0 },
+        { status: 'LISTED' },
         { owner: { $ne: _id } },
         {
           $or: [
@@ -355,7 +355,7 @@ function searchRestricted(req, res) {
     Textbook
       .find({
         $and: [
-          { status: 0 },
+          { status: 'LISTED' },
           { owner: { $ne: _id } },
           {
             $or: [
@@ -387,7 +387,7 @@ function search(req, res) {
   if (Number.isNaN(parsed)) {
     Textbook.find({
       $and: [
-        { status: 0 },
+        { status: 'LISTED' },
         {
           $or: [
             { name:   { $regex: searchKey, $options: 'i' } },
@@ -402,7 +402,7 @@ function search(req, res) {
     Textbook
       .find({
         $and: [
-          { status: 0 },
+          { status: 'LISTED' },
           {
             $or: [
               { name:   { $regex: searchKey, $options: 'i' } },
@@ -427,7 +427,7 @@ function getUserPosts(req, res) {
   const { payload: { userInfo: { _id } } } = req;
   Textbook.find({
     $and: [
-      { $or: [{ status: 0 }, { status: 5 }] },
+      { $or: [{ status: 'LISTED' }, { status: 'UNLISTED' }] },
       { owner: _id },
     ],
   }, (err, books) => {
@@ -470,7 +470,7 @@ function getAllBooks(req, res) {
   Textbook
     .find({
       $and: [
-        { status: 0 },
+        { status: 'LISTED' },
         { owner: { $ne: _id } }],
     })
     .limit(BOOK_LIMIT)
@@ -514,10 +514,10 @@ function generalGetBooks(data) {
   const offset = data.skip == null ? 0 : parseInt(data.skip, 10);
   const limit = data.limit == null ? BOOK_LIMIT : parseInt(data.limit, 10);
   const query = (data.userID == null)
-    ? { status: 0 }
+    ? { status: 'LISTED' }
     : {
       $and: [
-        { status: 0 },
+        { status: 'LISTED' },
         { owner: { $ne: data.userID } },
       ],
     };
@@ -543,7 +543,7 @@ function reactivateBook(req, res) {
     ],
   },
   {
-    $set: { status: 0 },
+    $set: { status: 'LISTED' },
   }, (error) => {
     if (!error) {
       res.status(200).json(response());

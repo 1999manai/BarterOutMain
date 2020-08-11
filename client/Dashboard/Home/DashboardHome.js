@@ -90,7 +90,7 @@ class DashboardHome extends Component {
   }
 
   _getPurchasedBooks() {
-    FetchService.GET('/api/dashboard/getBooksWithStatus/3')
+    FetchService.GET('/api/dashboard/getBooksWithStatus/Tran_fail)
       .then((data) => {
         FetchService.POST('/api/dashboard/extendBookInfo', {
           books: data,
@@ -102,7 +102,7 @@ class DashboardHome extends Component {
   }
 
   _getOnGoingTransactions() {
-    FetchService.GET('/api/dashboard/getBooksWithStatus/1')
+    FetchService.GET('/api/dashboard/getBooksWithStatus/Cart_added')
       .then((data) => {
         FetchService.POST('/api/dashboard/extendBookInfo', {
           books: data,
@@ -114,7 +114,7 @@ class DashboardHome extends Component {
   }
 
   _getRecievedTransactions() {
-    FetchService.GET('/api/dashboard/getBooksWithStatus/2')
+    FetchService.GET('/api/dashboard/getBooksWithStatus/Tran_succ')
       .then((data) => {
         FetchService.POST('/api/dashboard/extendBookInfo', {
           books: data,
