@@ -21,11 +21,11 @@ const config = {
   port:     process.env.PORT || 8080,
   key:      process.env.JWT_SECRET || 'secret',
   VALID_STATUSES: {
-    LISTED:      0,
-    STAGE_ONE:   1,
-    STAGE_TWO:   2,
-    STAGE_THREE: 3,
-    UNLISTED:    5,
+    LISTED:      'LISTED',
+    STAGE_ONE:   'Cart_added',
+    STAGE_TWO:   'Tran_succ',
+    STAGE_THREE: 'Tran_fail',
+    UNLISTED:    'UNLISTED',
   },
 };
 

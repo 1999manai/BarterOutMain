@@ -33,7 +33,7 @@ function remakeMatches(userID) {
           Textbook.find(
             {
               $and: [
-                { status: 0 },
+                { status: 'LISTED' },
                 {
                   $or: [
                     { name:   { $regex: book.name, $options: 'i' } },
@@ -83,7 +83,7 @@ function getCartItems(req, res) {
   User.findOne({ _id }, (err, user) => {
     let itemsInCart = [];
     const bookIDs = user.cart;
-    Textbook.find({ $and: [{ _id: { $in: bookIDs } }, { status: 0 }] }, (error, books) => {
+    Textbook.find({ $and: [{ _id: { $in: bookIDs } }, { status: 'LISTED' }] }, (error, books) => {
       itemsInCart = books;
       res.status(200).json(response(itemsInCart));
     });
@@ -171,7 +171,7 @@ function clearCart(req, res) {
 function getPurchasedBooks(req, res) {
   const { payload: { userInfo: { _id } } } = req;
   Textbook.find({
-    $and: [{ status: { $ne: 0 } }, { buyer: _id }],
+    $and: [{ status: { $ne: 'LISTED' } }, { buyer: _id }],
   }, (err, booksFound) => {
     res.status(200).json(response(booksFound));
   });
@@ -185,7 +185,7 @@ function getPurchasedBooks(req, res) {
 function getSoldBooks(req, res) {
   const { payload: { userInfo: { _id } } } = req;
   Textbook.find({
-    $and: [{ status: { $ne: 0 } }, { owner: _id }],
+    $and: [{ status: { $ne: 'LISTED' } }, { owner: _id }],
   }, (err, booksFound) => {
     res.status(200).json(response(booksFound));
   });
