@@ -17,7 +17,7 @@
 */
 
 const config = {
-  mongoURL: process.env.MONGO_URL || 'mongodb://localhost/barterout-db',
+  mongoURL: process.env.MONGO_URL || 'mongodb+srv://user:medMEDmed@cluster0.datgb.mongodb.net/barterout-db?retryWrites=true&w=majority',
   port:     process.env.PORT || 8080,
   key:      process.env.JWT_SECRET || 'secret',
   VALID_STATUSES: {
